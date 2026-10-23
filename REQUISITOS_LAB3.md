@@ -210,86 +210,93 @@ El modelo debe representar fielmente la operativa aduanera y contener al menos 6
 > Esta lista de verificación contiene todos los requisitos exigidos para la entrega. No marques ningún requisito como terminado hasta haber auditado y verificado físicamente su cumplimiento en el repositorio.
 
 ### 9.1. Entregables y Estructura del Repositorio
-- [ ] Existe la carpeta `docs/` con el DER (`01_modelo_entidad_relacion.md`) y el informe de investigación (`documento_investigacion_inventario_aduanero.md`).
-- [ ] Existe la carpeta `sql/` con los 4 scripts (`01_creacion_tablas.sql`, `02_insercion_datos.sql`, `03_seguridad_agente_readonly.sql`, `04_consultas_verificacion.sql`).
-- [ ] Existe la carpeta `n8n/` con el workflow (`workflow_inventario_aduanero.json`), el prompt (`agente_inventario_aduanero_prompt.md`) y la guía (`guia_configuracion_n8n.md`).
-- [ ] Existe el archivo `.gitignore` protegiendo variables de entorno, claves y temporales.
-- [ ] Existe el archivo `README.md` documentando la visión general, arquitectura y fases del proyecto.
-- [ ] Existe el archivo `REQUISITOS_LAB3.md` como fuente de verdad.
+- [x] Existe la carpeta `docs/` con el DER (`01_modelo_entidad_relacion.md`) y el informe de investigación (`documento_investigacion_inventario_aduanero.md`).
+- [x] Existe la carpeta `sql/` con los 4 scripts (`01_creacion_tablas.sql`, `02_insercion_datos.sql`, `03_seguridad_agente_readonly.sql`, `04_consultas_verificacion.sql`).
+- [x] Existe la carpeta `n8n/` con el workflow (`workflow_inventario_aduanero.json`), el prompt (`agente_inventario_aduanero_prompt.md`) y la guía (`guia_configuracion_n8n.md`).
+- [x] Existe el archivo `.gitignore` protegiendo variables de entorno, claves y temporales.
+- [x] Existe el archivo `README.md` documentando la visión general, arquitectura y fases del proyecto.
+- [x] Existe el archivo `REQUISITOS_LAB3.md` como fuente de verdad.
 
 ### 9.2. Documento de Investigación Académico
-- [ ] Cumple con la extensión exigida de 3 a 6 páginas (2,000 a 4,500 palabras aprox.).
-- [ ] Redactado en español claro, formal y con vocabulario propio sin copias literales.
-- [ ] Incluye portada sugerida con campos institucionales señalados con `[PERSONALIZAR]`.
-- [ ] Incluye introducción formal al problema de gestión de inventarios en aduanas.
-- [ ] Explica Punto 1: Base de datos y SGBD (persistencia, ACID, concurrencia).
-- [ ] Explica Punto 2: Diferencias entre RDBMS y NoSQL y justificación de ACID en fiscalización aduanera.
-- [ ] Explica Punto 3: Tablas, registros, campos y tipos de datos (`SERIAL`, `VARCHAR`, `TEXT`, `NUMERIC`, `BOOLEAN`, `TIMESTAMPTZ`).
-- [ ] Explica Punto 4: Claves primarias (PK), foráneas (FK) y llaves compuestas.
-- [ ] Explica Punto 5: Relaciones 1:1, 1:N y N:M y su implementación física en tablas.
-- [ ] Explica Punto 6: Integridad referencial (`ON DELETE`/`UPDATE`) y restricciones (`NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`).
-- [ ] Explica Punto 7: DDL y DML (`CREATE`, `INSERT`, `SELECT`, `UPDATE`, `DELETE`) y composición con `JOIN` (`INNER`, `LEFT`, `RIGHT`, `FULL`).
-- [ ] Explica Punto 8: Normalización 1FN, 2FN y 3FN con ejemplos de infracción aduanera y solución.
-- [ ] Explica Punto 9: DER y comparativa técnica/visual entre notación de Chen y Pata de Gallo (*Crow's Foot*).
-- [ ] Explica Punto 10: Comparativa técnica de SQLite, MySQL y PostgreSQL, justificando la elección de PostgreSQL.
-- [ ] Explica Punto 11: Ecosistema n8n (workflows, nodos, triggers, credenciales, chatbot vs. AI Agent, LLM y Tools).
-- [ ] Explica Punto 12: Consulta segura de base de datos bajo el principio de mínimo privilegio.
-- [ ] Explica Punto 13: Dominio aduanero (Aduana, DUA, Agente aduanal, SA/HS, Partida, Arancel, Valor CIF).
-- [ ] Explica Punto 13 (Regímenes): Detalla regímenes de **Importación**, **Exportación**, **Tránsito** y **Depósito Aduanero/Fiscal**.
-- [ ] Explica Punto 14 (Uso de IA): Declara el uso de Antigravity como asistente de pair programming de forma honesta.
-- [ ] Explica Punto 14 (Prompts): Incluye ejemplos literales de los prompts empleados durante el desarrollo.
-- [ ] Explica Punto 14 (Aprendizaje): Detalla los conocimientos adquiridos por el estudiante con opciones `[PERSONALIZAR]`.
-- [ ] Incluye sección de Conclusiones estructuradas con hallazgos clave.
-- [ ] Incluye Referencias Bibliográficas confiables con autor, título, editorial/fuente, URL completa y fecha de consulta.
+- [x] Cumple con la extensión exigida de 3 a 6 páginas (2,000 a 4,500 palabras aprox.).
+- [x] Redactado en español claro, formal y con vocabulario propio sin copias literales.
+- [x] Incluye portada sugerida con campos institucionales señalados con `[PERSONALIZAR]`.
+- [x] Incluye introducción formal al problema de gestión de inventarios en aduanas.
+- [x] Explica Punto 1: Base de datos y SGBD (persistencia, ACID, concurrencia).
+- [x] Explica Punto 2: Diferencias entre RDBMS y NoSQL y justificación de ACID en fiscalización aduanera.
+- [x] Explica Punto 3: Tablas, registros, campos y tipos de datos (`SERIAL`, `VARCHAR`, `TEXT`, `NUMERIC`, `BOOLEAN`, `TIMESTAMPTZ`).
+- [x] Explica Punto 4: Claves primarias (PK), foráneas (FK) y llaves compuestas.
+- [x] Explica Punto 5: Relaciones 1:1, 1:N y N:M y su implementación física en tablas.
+- [x] Explica Punto 6: Integridad referencial (`ON DELETE`/`UPDATE`) y restricciones (`NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`).
+- [x] Explica Punto 7: DDL y DML (`CREATE`, `INSERT`, `SELECT`, `UPDATE`, `DELETE`) y composición con `JOIN` (`INNER`, `LEFT`, `RIGHT`, `FULL`).
+- [x] Explica Punto 8: Normalización 1FN, 2FN y 3FN con ejemplos de infracción aduanera y solución.
+- [x] Explica Punto 9: DER y comparativa técnica/visual entre notación de Chen y Pata de Gallo (*Crow's Foot*).
+- [x] Explica Punto 10: Comparativa técnica de SQLite, MySQL y PostgreSQL, justificando la elección de PostgreSQL.
+- [x] Explica Punto 11: Ecosistema n8n (workflows, nodos, triggers, credenciales, chatbot vs. AI Agent, LLM y Tools).
+- [x] Explica Punto 12: Consulta segura de base de datos bajo el principio de mínimo privilegio.
+- [x] Explica Punto 13: Dominio aduanero (Aduana, DUA, Agente aduanal, SA/HS, Partida, Arancel, Valor CIF).
+- [x] Explica Punto 13 (Regímenes): Detalla regímenes de **Importación**, **Exportación**, **Tránsito** y **Depósito Aduanero/Fiscal**.
+- [x] Explica Punto 14 (Uso de IA): Declara el uso de Antigravity como asistente de pair programming de forma honesta.
+- [x] Explica Punto 14 (Prompts): Incluye ejemplos literales de los prompts empleados durante el desarrollo.
+- [x] Explica Punto 14 (Aprendizaje): Detalla los conocimientos adquiridos por el estudiante con opciones `[PERSONALIZAR]`.
+- [x] Incluye sección de Conclusiones estructuradas con hallazgos clave.
+- [x] Incluye Referencias Bibliográficas confiables con autor, título, editorial/fuente, URL completa y fecha de consulta.
 
 ### 9.3. Modelo Entidad-Relación (DER)
-- [ ] Incluye al menos 6 entidades (3 padres: `importador`, `deposito_aduanero`, `categoria_arancelaria`; 3 hijas: `declaracion_aduanera`, `mercancia_inventario`, `inspeccion_aduanera`).
-- [ ] Contiene diagrama en Mermaid sintácticamente correcto y legible.
-- [ ] Señala claramente las claves primarias (`PK`) y foráneas (`FK`) en cada entidad.
-- [ ] Define cardinalidades apropiadas (1:N) entre todas las entidades relacionadas.
-- [ ] Incluye diccionario de datos con descripción funcional de cada tabla y columna.
-- [ ] Documenta las reglas de negocio asociadas a cada relación.
-- [ ] Establece el orden de creación y precedencia de dependencias para el DDL.
+- [x] Incluye al menos 6 entidades (ampliado a 13 entidades normalizadas en 3FN).
+- [x] Contiene diagrama en Mermaid sintácticamente correcto y legible.
+- [x] Señala claramente las claves primarias (`PK`) y foráneas (`FK`) en cada entidad.
+- [x] Define cardinalidades apropiadas (1:N, N:M resuelta, 1:1/recursiva) entre todas las entidades relacionadas.
+- [x] Incluye diccionario de datos con descripción funcional de cada tabla y columna.
+- [x] Documenta las reglas de negocio asociadas a cada relación.
+- [x] Establece el orden de creación y precedencia de dependencias para el DDL.
 
 ### 9.4. Script SQL DDL y DML
-- [ ] Todas las tablas, columnas y restricciones usan nomenclatura `snake_case` sin tildes ni caracteres especiales.
-- [ ] Contiene bloque idempotente de eliminación (`DROP TABLE IF EXISTS ... CASCADE`) en orden de hijas a padres.
-- [ ] Crea las tablas en orden correcto de dependencias (de padres a hijas) sin producir errores de ejecución.
-- [ ] Implementa `PRIMARY KEY` en las 6 entidades del modelo.
-- [ ] Implementa `FOREIGN KEY` con restricciones referenciales coherentes.
-- [ ] Define `NOT NULL` en todos los campos críticos para la fiscalización.
-- [ ] Define restricciones `UNIQUE` para identificadores únicos de negocio.
-- [ ] Define restricciones `CHECK` para listas cerradas de valores (tipos de depósito, canales de aforo, regímenes, estados).
-- [ ] Define restricciones `CHECK` para magnitudes positivas (`peso_bruto_kg > 0`, `capacidad_maxima_m3 > 0`, `tasa_arancelaria BETWEEN 0 AND 100`).
-- [ ] Define restricciones `CHECK` para consistencia cronológica (`fecha_levante >= fecha_presentacion`, `fecha_salida >= fecha_ingreso`).
-- [ ] Define restricción `CHECK` con expresión regular para validar el formato de correo de contacto.
-- [ ] Asigna valores `DEFAULT` coherentes en estados y marcas temporales.
-- [ ] Incluye comentarios formales en PostgreSQL (`COMMENT ON TABLE` y `COMMENT ON COLUMN`).
-- [ ] El script `02_insercion_datos.sql` inserta datos de prueba coherentes y suficientes para todas las tablas.
-- [ ] El script `04_consultas_verificacion.sql` contiene consultas analíticas con `JOIN`, agrupaciones y reportes de aforo.
+- [x] Todas las tablas, columnas y restricciones usan nomenclatura `snake_case` sin tildes ni caracteres especiales.
+- [x] Contiene bloque idempotente de eliminación (`DROP TABLE IF EXISTS ... CASCADE`) en orden de hijas a padres.
+- [x] Crea las tablas en orden correcto de dependencias (de padres a hijas) sin producir errores de ejecución.
+- [x] Implementa `PRIMARY KEY` en todas las entidades del modelo.
+- [x] Implementa `FOREIGN KEY` con restricciones referenciales coherentes.
+- [x] Define `NOT NULL` en todos los campos críticos para la fiscalización.
+- [x] Define restricciones `UNIQUE` para identificadores únicos de negocio.
+- [x] Define restricciones `CHECK` para listas cerradas de valores (tipos de depósito, canales de aforo, regímenes, estados).
+- [x] Define restricciones `CHECK` para magnitudes positivas (`peso_bruto_kg > 0`, `capacidad_maxima_m3 > 0`, `tasa_arancelaria BETWEEN 0 AND 100`).
+- [x] Define restricciones `CHECK` para consistencia cronológica (`fecha_levante >= fecha_presentacion`, `fecha_salida >= fecha_ingreso`).
+- [x] Define restricción `CHECK` con expresión regular para validar el formato de correo de contacto.
+- [x] Asigna valores `DEFAULT` coherentes en estados y marcas temporales.
+- [x] Incluye comentarios formales en PostgreSQL (`COMMENT ON TABLE` y `COMMENT ON COLUMN`).
+- [x] El script `02_insercion_datos.sql` y `Robles_Bianca_Aduana_Lab3.sql` insertan datos de prueba coherentes (>= 15 filas por tabla, 219 en total).
+- [x] El script contiene consultas analíticas con `JOIN`, `WHERE`, `GROUP BY` y `ORDER BY` que responden preguntas aduaneras reales.
 
 ### 9.5. Seguridad y Usuario de Solo Lectura
-- [ ] El script `03_seguridad_agente_readonly.sql` crea el rol `agente_consulta` con capacidad de login.
-- [ ] Revoca todos los privilegios sobre el esquema `public` a `PUBLIC`.
-- [ ] Revoca permisos de inserción, actualización, eliminación y alteración de tablas al rol `agente_consulta`.
-- [ ] Concede exclusivamente `USAGE` en el esquema `public` y `SELECT` en las tablas del sistema.
-- [ ] Configura `ALTER DEFAULT PRIVILEGES` para asegurar futuras tablas creadas en el esquema.
-- [ ] No expone contraseñas reales ni credenciales sensibles en el código fuente versionado.
-- [ ] Incluye comandos de prueba comentados que validan la ejecución exitosa de `SELECT` y el fallo con *permission denied* de `INSERT`, `UPDATE`, `DELETE` y `DROP`.
+- [x] El script `03_seguridad_agente_readonly.sql` crea el rol `agente_consulta` con capacidad de login.
+- [x] Revoca todos los privilegios sobre el esquema `public` a `PUBLIC`.
+- [x] Revoca permisos de inserción, actualización, eliminación y alteración de tablas al rol `agente_consulta`.
+- [x] Concede exclusivamente `USAGE` en el esquema `public` y `SELECT` en las tablas del sistema.
+- [x] Configura `ALTER DEFAULT PRIVILEGES` para asegurar futuras tablas creadas en el esquema.
+- [x] No expone contraseñas reales ni credenciales sensibles en el código fuente versionado.
+- [x] Incluye comandos de prueba comentados que validan la ejecución exitosa de `SELECT` y el fallo con *permission denied* de `INSERT`, `UPDATE`, `DELETE` y `DROP`.
 
 ### 9.6. Automatización y Agente en n8n
-- [ ] El archivo `workflow_inventario_aduanero.json` es válido e importable sin errores de esquema.
-- [ ] Integra nodo `When chat message received` (Chat Trigger) interactivo.
-- [ ] Integra nodo `AI Agent` con configuración de herramientas.
-- [ ] Integra nodo de modelo de lenguaje compatible (`OpenAI Chat Model` o equivalente).
-- [ ] Integra nodo de memoria conversacional (`Window Buffer Memory`).
-- [ ] Integra nodo de herramienta de base de datos (`Postgres Tool`) vinculado con credenciales de solo lectura.
-- [ ] El archivo `agente_inventario_aduanero_prompt.md` contiene el System Message con la prohibición explícita de modificación.
-- [ ] El System Prompt documenta el esquema completo de las 6 tablas con sus columnas y descripciones.
-- [ ] El archivo `guia_configuracion_n8n.md` explica la configuración de credenciales y los 4 casos de prueba verificables.
+- [x] El archivo `workflow_inventario_aduanero.json` y `Robles_Bianca_Agente_Lab3.json` son válidos e importables sin errores de esquema.
+- [x] Integra nodo `When chat message received` (Chat Trigger) interactivo.
+- [x] Integra nodo `AI Agent` con configuración de herramientas.
+- [x] Integra nodo de modelo de lenguaje compatible (`OpenAI Chat Model` o equivalente).
+- [x] Integra nodo de memoria conversacional (`Window Buffer Memory`).
+- [x] Integra nodo de herramienta de base de datos (`Postgres Tool`) vinculado con credenciales de solo lectura.
+- [x] El archivo `agente_inventario_aduanero_prompt.md` contiene el System Message con la prohibición explícita de modificación.
+- [x] El System Prompt documenta el esquema completo de las 13 tablas con sus columnas y descripciones.
+- [x] El archivo `guia_configuracion_n8n.md` explica la configuración de credenciales y los casos de prueba verificables.
 
 ---
 
 ## 10. Pendientes detectados
 
-*(Esta sección se encuentra inicialmente vacía para registrar observaciones, incidencias o tareas pendientes que surjan durante la ejecución o auditoría del proyecto).*
+A partir de la auditoría final integral, se identificaron los siguientes entregables que dependen de acciones finales del estudiante previas a la entrega:
+
+1. **Exportación a PDF del Documento de Investigación (`Robles_Bianca_Investigacion_Lab3.pdf`):**
+   - Personalizar las etiquetas `[PERSONALIZAR]` en la portada de `docs/documento_investigacion_inventario_aduanero.md` y exportar a PDF en la raíz del repositorio.
+2. **Exportación Gráfica del DER (`Robles_Bianca_DER_Lab3.png`):**
+   - Pegar el código DBML de `docs/01_modelo_entidad_relacion.md` en [dbdiagram.io](https://dbdiagram.io/) y descargar la imagen renderizada en PNG/PDF.
+3. **Registro de Capturas de Ejecución en n8n (`Robles_Bianca_Evidencia_Lab3.pdf` o `.mp4`):**
+   - Importar `Robles_Bianca_Agente_Lab3.json` en n8n local/cloud, ejecutar las 8 consultas de la matriz de pruebas (`docs/matriz_pruebas_agente_n8n.md`) más las 2 de seguridad (inyección de DROP/UPDATE), y adjuntar las capturas comprobatorias sin exponer API keys.
