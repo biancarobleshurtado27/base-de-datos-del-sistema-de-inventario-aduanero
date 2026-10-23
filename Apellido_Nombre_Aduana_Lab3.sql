@@ -550,45 +550,45 @@ SELECT setval('inspeccion_id_inspeccion_seq', 16);
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 1: Declaraciones de importación presentadas en el mes de octubre
--- Pregunta de Negocio: ¿Cuáles declaraciones bajo régimen de importación definitiva
--- ingresaron durante el mes de octubre de 2026, qué importador las tramitó, cuál
--- fue su canal de aforo asignado y su valor CIF liquidado?
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
+-- Pregunta de Negocio: ¿Cuál es el consolidado de declaraciones de importación
+-- definitiva tramitadas en octubre de 2026, agrupadas por importador y canal de aforo,
+-- indicando la cantidad de DUAs, el valor CIF acumulado y los tributos liquidados?
 -- ----------------------------------------------------------------------------
 SELECT 
-    da.numero_declaracion,
+    ie.numero_identificacion,
     ie.razon_social AS importador,
-    aa.nombre_agencia AS agencia_aduanal,
     da.tipo_regimen,
     da.canal_aforo,
-    da.estado_declaracion,
-    da.valor_cif_total_usd,
-    da.total_tributos_usd,
-    TO_CHAR(da.fecha_presentacion, 'YYYY-MM-DD HH24:MI') AS fecha_presentacion
+    COUNT(da.id_declaracion) AS total_declaraciones_octubre,
+    SUM(da.valor_cif_total_usd) AS total_cif_usd,
+    SUM(da.total_tributos_usd) AS total_tributos_usd
 FROM declaracion_aduanera da
 INNER JOIN importador_exportador ie ON da.id_operador = ie.id_operador
 INNER JOIN agente_aduanal aa ON da.id_agente = aa.id_agente
 WHERE da.tipo_regimen = 'importacion_definitiva'
   AND da.fecha_presentacion >= '2026-10-01 00:00:00-06'
   AND da.fecha_presentacion < '2026-11-01 00:00:00-06'
-ORDER BY da.fecha_presentacion DESC;
+GROUP BY ie.numero_identificacion, ie.razon_social, da.tipo_regimen, da.canal_aforo
+ORDER BY total_cif_usd DESC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 2: Mercancías retenidas por bodega
--- Pregunta de Negocio: ¿Qué productos se encuentran actualmente retenidos o bloqueados
--- por aforo en cada bodega fiscal, indicando la ubicación física, cantidad y DUA?
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
+-- Pregunta de Negocio: ¿Cuál es el volumen total de mercancías retenidas o bloqueadas
+-- por aforo en cada bodega fiscal, agrupado por producto y bodega, indicando la cantidad
+-- física retenida, unidades de medida y el valor CIF total en riesgo?
 -- ----------------------------------------------------------------------------
 SELECT 
     b.codigo_bodega,
     b.nombre AS bodega_custodia,
     p.codigo_sku,
     p.nombre_comercial AS producto,
-    da.numero_declaracion,
-    ib.ubicacion_especifica,
-    ib.cantidad_retenida,
     p.unidad_medida,
-    ib.estado_fiscal,
-    TO_CHAR(ib.fecha_ingreso, 'YYYY-MM-DD') AS fecha_ingreso
+    COUNT(DISTINCT da.id_declaracion) AS total_duas_retenidas,
+    SUM(ib.cantidad_retenida) AS total_unidades_retenidas,
+    SUM(dd.valor_cif_linea_usd) AS valor_cif_retenido_usd
 FROM inventario_bodega ib
 INNER JOIN bodega b ON ib.id_bodega = b.id_bodega
 INNER JOIN detalle_declaracion dd ON ib.id_detalle = dd.id_detalle
@@ -596,13 +596,15 @@ INNER JOIN producto p ON dd.id_producto = p.id_producto
 INNER JOIN declaracion_aduanera da ON dd.id_declaracion = da.id_declaracion
 WHERE ib.cantidad_retenida > 0 
    OR ib.estado_fiscal = 'retenido_fiscal'
-ORDER BY b.codigo_bodega ASC, ib.cantidad_retenida DESC;
+GROUP BY b.codigo_bodega, b.nombre, p.codigo_sku, p.nombre_comercial, p.unidad_medida
+ORDER BY total_unidades_retenidas DESC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 3: País con más contenedores ingresados
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
 -- Pregunta de Negocio: ¿Cuál es el ranking de países de procedencia con mayor volumen
--- de contenedores ingresados al sistema aduanero y qué porcentaje representan?
+-- de contenedores activos en patio o desconsolidados y qué carga útil representan?
 -- ----------------------------------------------------------------------------
 SELECT 
     p.codigo_alfa2,
@@ -612,12 +614,15 @@ SELECT
     SUM(c.capacidad_maxima_kg - c.tara_kg) AS carga_util_maxima_ton
 FROM contenedor c
 INNER JOIN pais p ON c.id_pais_procedencia = p.id_pais
+WHERE p.activo = true 
+  AND c.estado_contenedor <> 'retornado'
 GROUP BY p.codigo_alfa2, p.nombre
 ORDER BY total_contenedores DESC, pais_procedencia ASC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 4: Importador con mayor valor total declarado (Valor CIF acumulado)
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
 -- Pregunta de Negocio: ¿Cuáles importadores acumulan el mayor valor económico CIF
 -- declarado ante la aduana, cuántas operaciones han tramitado y cuánto han tributado?
 -- ----------------------------------------------------------------------------
@@ -632,25 +637,26 @@ SELECT
 FROM importador_exportador ie
 INNER JOIN declaracion_aduanera da ON ie.id_operador = da.id_operador
 INNER JOIN pais p ON ie.id_pais = p.id_pais
+WHERE ie.activo = true 
+  AND da.estado_declaracion <> 'anulada'
 GROUP BY ie.numero_identificacion, ie.razon_social, p.nombre
 ORDER BY valor_cif_acumulado_usd DESC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 5: Inspecciones con observaciones y funcionario responsable
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
 -- Pregunta de Negocio: ¿Cuáles aforos o inspecciones aduaneras presentaron anomalías,
 -- ajustes o comisos, cuál fue la observación técnica y quién fue el funcionario y su supervisor?
 -- ----------------------------------------------------------------------------
 SELECT 
-    i.numero_acta,
-    da.numero_declaracion,
+    f_aforador.numero_empleado,
+    f_aforador.nombre_completo AS funcionario_aforador,
+    COALESCE(f_supervisor.nombre_completo, 'Despacho Dirección General') AS supervisor_inmediato,
     i.tipo_inspeccion,
     i.resultado,
-    f_aforador.nombre_completo AS funcionario_aforador,
-    f_aforador.cargo AS cargo_aforador,
-    COALESCE(f_supervisor.nombre_completo, 'Dirección General') AS supervisor_a_cargo,
-    i.observaciones,
-    TO_CHAR(i.fecha_inspeccion, 'YYYY-MM-DD HH24:MI') AS fecha_inspeccion
+    COUNT(i.id_inspeccion) AS total_inspecciones_anomalas,
+    STRING_AGG(da.numero_declaracion || ' (' || i.numero_acta || '): ' || i.observaciones, ' | ') AS detalle_observaciones
 FROM inspeccion i
 INNER JOIN declaracion_aduanera da ON i.id_declaracion = da.id_declaracion
 INNER JOIN funcionario f_aforador ON i.id_funcionario_aforador = f_aforador.id_funcionario
@@ -658,13 +664,15 @@ LEFT JOIN funcionario f_supervisor ON f_aforador.id_supervisor = f_supervisor.id
 WHERE i.observaciones IS NOT NULL 
   AND TRIM(i.observaciones) <> ''
   AND i.resultado IN ('no_conforme_ajuste', 'no_conforme_comiso', 'dictamen_pendiente')
-ORDER BY i.fecha_inspeccion DESC;
+GROUP BY f_aforador.numero_empleado, f_aforador.nombre_completo, f_supervisor.nombre_completo, i.tipo_inspeccion, i.resultado
+ORDER BY total_inspecciones_anomalas DESC, f_aforador.nombre_completo ASC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 6: Stock consolidado de productos en todas las bodegas
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
 -- Pregunta de Negocio: ¿Cuál es la disponibilidad física y fiscal de cada producto
--- (saldo disponible vs. saldo retenido) distribuido en los diferentes almacenes fiscales?
+-- activo (saldo disponible vs. saldo retenido) distribuido en los almacenes fiscales activos?
 -- ----------------------------------------------------------------------------
 SELECT 
     p.codigo_sku,
@@ -680,57 +688,65 @@ INNER JOIN partida_arancelaria pa ON p.id_partida = pa.id_partida
 INNER JOIN detalle_declaracion dd ON p.id_producto = dd.id_producto
 INNER JOIN inventario_bodega ib ON dd.id_detalle = ib.id_detalle
 INNER JOIN bodega b ON ib.id_bodega = b.id_bodega
+WHERE p.activo = true 
+  AND b.activa = true
 GROUP BY p.codigo_sku, p.nombre_comercial, pa.codigo_partida, b.nombre, p.unidad_medida
 ORDER BY p.codigo_sku ASC, stock_total_en_bodega DESC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 7: Trazabilidad y auditoría de movimientos de inventario
--- Pregunta de Negocio: ¿Cuál es el historial cronológico de movimientos de bodega,
--- qué tipo de operación se realizó, quién la autorizó y cuál fue la justificación?
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
+-- Pregunta de Negocio: ¿Cuál es el resumen de movimientos de bodega por tipo de operación,
+-- bodega, producto y funcionario autorizador, indicando el volumen total movilizado?
 -- ----------------------------------------------------------------------------
 SELECT 
-    mi.id_movimiento,
-    TO_CHAR(mi.fecha_movimiento, 'YYYY-MM-DD HH24:MI:SS') AS fecha_hora,
-    mi.tipo_movimiento,
-    p.nombre_comercial AS producto,
     b.codigo_bodega,
     b.nombre AS bodega,
-    mi.cantidad,
-    p.unidad_medida,
+    mi.tipo_movimiento,
+    p.nombre_comercial AS producto,
     f.nombre_completo AS funcionario_autorizador,
-    f.cargo,
-    mi.motivo_observacion
+    COUNT(mi.id_movimiento) AS total_movimientos_registrados,
+    SUM(mi.cantidad) AS volumen_total_movilizado,
+    p.unidad_medida
 FROM movimiento_inventario mi
 INNER JOIN inventario_bodega ib ON mi.id_inventario = ib.id_inventario
 INNER JOIN bodega b ON ib.id_bodega = b.id_bodega
 INNER JOIN detalle_declaracion dd ON ib.id_detalle = dd.id_detalle
 INNER JOIN producto p ON dd.id_producto = p.id_producto
 INNER JOIN funcionario f ON mi.id_funcionario = f.id_funcionario
-ORDER BY mi.fecha_movimiento DESC;
+WHERE mi.cantidad > 0
+GROUP BY b.codigo_bodega, b.nombre, mi.tipo_movimiento, p.nombre_comercial, f.nombre_completo, p.unidad_medida
+ORDER BY total_movimientos_registrados DESC, b.codigo_bodega ASC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 8: Resumen estadístico por régimen aduanero y canal de aforo
--- Pregunta de Negocio: ¿Cómo se distribuyen las declaraciones por tipo de régimen y
--- canal de aforo (verde, amarillo, rojo), cuál es el volumen CIF y la recaudación generada?
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
+-- Pregunta de Negocio: ¿Cómo se distribuyen las declaraciones por tipo de régimen,
+-- canal de aforo y estado, cuál es el volumen CIF y la recaudación generada?
 -- ----------------------------------------------------------------------------
 SELECT 
     da.tipo_regimen,
     da.canal_aforo,
+    da.estado_declaracion,
     COUNT(da.id_declaracion) AS total_declaraciones,
     SUM(da.valor_cif_total_usd) AS valor_cif_total_usd,
     SUM(da.total_tributos_usd) AS recaudacion_tributaria_usd,
     ROUND(AVG(da.valor_cif_total_usd), 2) AS promedio_cif_usd
 FROM declaracion_aduanera da
-GROUP BY da.tipo_regimen, da.canal_aforo
+INNER JOIN importador_exportador ie ON da.id_operador = ie.id_operador
+INNER JOIN agente_aduanal aa ON da.id_agente = aa.id_agente
+WHERE da.valor_cif_total_usd > 0
+GROUP BY da.tipo_regimen, da.canal_aforo, da.estado_declaracion
 ORDER BY da.tipo_regimen ASC, total_declaraciones DESC;
 
 
 -- ----------------------------------------------------------------------------
 -- CONSULTA 9 (BONUS): Jerarquía del personal aduanero y aforos ejecutados
+-- Cláusulas: JOIN, WHERE, GROUP BY, ORDER BY
 -- Pregunta de Negocio: ¿Cómo está conformada la cadena de mando entre supervisores
--- y aforadores, y cuántas inspecciones ha realizado cada funcionario subordinado?
+-- y aforadores activos, y cuántas inspecciones ha realizado cada funcionario?
 -- ----------------------------------------------------------------------------
 SELECT 
     COALESCE(sup.nombre_completo, 'DESPACHO DEL DIRECTOR GENERAL') AS supervisor_inmediato,
@@ -744,6 +760,7 @@ SELECT
 FROM funcionario sub
 LEFT JOIN funcionario sup ON sub.id_supervisor = sup.id_funcionario
 LEFT JOIN inspeccion i ON sub.id_funcionario = i.id_funcionario_aforador
+WHERE sub.activo = true
 GROUP BY sup.nombre_completo, sup.cargo, sub.numero_empleado, sub.nombre_completo, sub.cargo
 ORDER BY supervisor_inmediato ASC, total_aforos_realizados DESC;
 
