@@ -37,19 +37,19 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO agente_consu
 -- ============================================================================
 -- Para verificar la efectividad, ejecutar en psql o cliente conectado como 'agente_consulta':
 --
--- PRUEBA 1 (DEBE FUNCIONAR):
--- SELECT id_mercancia, codigo_bulto, descripcion_comercial, estado_mercancia FROM mercancia_inventario LIMIT 3;
+-- PRUEBA 1 (DEBE FUNCIONAR - LECTURA AUTORIZADA):
+-- SELECT id_inventario, id_bodega, cantidad_disponible, cantidad_retenida, estado_fiscal FROM inventario_bodega LIMIT 5;
 --
--- PRUEBA 2 (DEBE FALLAR CON "permission denied for table"):
--- INSERT INTO mercancia_inventario (id_declaracion, id_categoria, codigo_bulto, descripcion_comercial, cantidad_bultos, peso_bruto_kg, valor_cif_usd, ubicacion_especifica)
--- VALUES (1, 1, 'BLT-HACK-001', 'Intento no autorizado', 1, 10, 100, 'X');
+-- PRUEBA 2 (DEBE FALLAR CON "permission denied for table inventario_bodega"):
+-- INSERT INTO inventario_bodega (id_bodega, id_detalle, ubicacion_especifica, cantidad_disponible, cantidad_retenida)
+-- VALUES (1, 1, 'HACK-POSICION', 100, 0);
 --
--- PRUEBA 3 (DEBE FALLAR CON "permission denied for table"):
--- UPDATE mercancia_inventario SET estado_mercancia = 'despachada' WHERE id_mercancia = 5;
+-- PRUEBA 3 (DEBE FALLAR CON "permission denied for table declaracion_aduanera"):
+-- UPDATE declaracion_aduanera SET canal_aforo = 'verde', estado_declaracion = 'con_levante' WHERE id_declaracion = 2;
 --
--- PRUEBA 4 (DEBE FALLAR CON "permission denied for table"):
--- DELETE FROM mercancia_inventario WHERE id_mercancia = 1;
+-- PRUEBA 4 (DEBE FALLAR CON "permission denied for table movimiento_inventario"):
+-- DELETE FROM movimiento_inventario WHERE id_movimiento = 1;
 --
--- PRUEBA 5 (DEBE FALLAR CON "must be owner of table"):
--- DROP TABLE mercancia_inventario;
+-- PRUEBA 5 (DEBE FALLAR CON "must be owner of table" o "permission denied"):
+-- DROP TABLE inventario_bodega;
 -- ============================================================================
