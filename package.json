@@ -1,0 +1,28 @@
+{
+  "name": "lab3",
+  "version": "1.0.0",
+  "description": "Laboratorio universitario de Bases de Datos con **PostgreSQL** y **n8n**.",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biancarobleshurtado27/base-de-datos-del-sistema-de-inventario-aduanero.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/biancarobleshurtado27/base-de-datos-del-sistema-de-inventario-aduanero/issues"
+  },
+  "homepage": "https://github.com/biancarobleshurtado27/base-de-datos-del-sistema-de-inventario-aduanero#readme",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "postgres": "^3.4.9"
+  }
+}

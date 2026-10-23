@@ -27,3 +27,6 @@ $RECYCLE.BIN/
 
 # Scratch scripts
 scratch/
+
+# Dependencias Node.js
+node_modules/
