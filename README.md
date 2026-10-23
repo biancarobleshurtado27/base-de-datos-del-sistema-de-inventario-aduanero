@@ -38,5 +38,7 @@ Laboratorio universitario de Bases de Datos con **PostgreSQL** y **n8n**.
 ├── n8n/
 │   ├── agente_inventario_aduanero_prompt.md # Prompt del agente y reglas de consulta
 │   └── workflow_inventario_aduanero.json    # Workflow exportado de n8n
+├── REQUISITOS_LAB3.md                      # Especificación de requisitos y checklist oficial
 └── README.md
 ```
+
