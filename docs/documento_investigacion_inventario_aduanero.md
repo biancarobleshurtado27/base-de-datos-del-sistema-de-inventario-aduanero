@@ -50,7 +50,7 @@ SEDE / CAMPUS: [PERSONALIZAR: CIUDAD O CAMPUS UNIVERSITARIO]
 6. [Marco Conceptual del Dominio Aduanero](#6-marco-conceptual-del-dominio-aduanero)
    - 6.1. Aduana, Declaración Aduanera (DUA) y Agente Aduanal
    - 6.2. Nomenclatura Arancelaria, Sistema Armonizado y Tributos de Importación
-   - 6.3. Regímenes Aduaneros: Definitivo, Depósito Fiscal, Tránsito y Admisión Temporal
+   - 6.3. Regímenes Aduaneros: Importación, Exportación, Tránsito y Depósito Aduanero
 7. [Apartado: Transparencia y Declaración del Uso de Inteligencia Artificial](#7-apartado-transparencia-y-declaración-del-uso-de-inteligencia-artificial)
 8. [Conclusiones](#8-conclusiones)
 9. [Referencias Bibliográficas](#9-referencias-bibliográficas)
@@ -185,16 +185,45 @@ La **normalización** es un proceso sistemático y formal de diseño relacional 
 El modelado conceptual traduce los requerimientos aduaneros a una representación visual formal:
 
 * **Notación de Chen (1976)**:
-  * Emplea rectángulos para las entidades, elipses u óvalos para los atributos (subrayando la clave primaria) y rombos conectores para describir los verbos o relaciones semánticas.
-  * Incluye la cardinalidad mediante anotaciones numéricas `(1, 1)`, `(1, N)` o `(0, N)` sobre los arcos de conexión. Es altamente pedagógica y enfatiza la semántica formal de las relaciones.
-* **Notación Pata de Gallo (Crow's Foot / Martin / Barkers)**:
-  * Modela las entidades como cajas tabulares donde se listan sus columnas, denotando explícitamente `PK` y `FK`.
+  * Emplea **rectángulos** para las entidades, **elipses u óvalos** para los atributos (subrayando la clave primaria) y **rombos** conectores para describir los verbos o relaciones semánticas.
+  * Incluye la cardinalidad mediante anotaciones numéricas o alfanuméricas `(min, max)` como `(1, 1)`, `(0, N)` o `(1, N)` sobre los arcos de conexión. Es altamente pedagógica, analítica y enfatiza la semántica formal del modelo conceptual.
+  * *Representación esquemática Chen*:
+    ```text
+    (id_importador)   (razon_social)                      (numero_declaracion)   (canal_aforo)
+           \               /                                       \               /
+            [ IMPORTADOR ] ====== (1,1) ====== < TRAMITA > ====== (0,N) ====== [ DECLARACION ]
+    ```
+* **Notación Pata de Gallo (Crow's Foot / Martin / Barker)**:
+  * Modela las entidades como **cajas tabulares** donde se listan sus columnas, denotando explícitamente `PK` y `FK`.
   * La cardinalidad y opcionalidad se representan en los extremos de las líneas de relación mediante símbolos gráficos específicos:
     * Dos líneas perpendiculares paralelas: exactamente uno obligatorio `(||)`.
     * Un círculo y una línea perpendicular: cero o uno opcional `(O|)`.
     * Un círculo y un tridente ("pata de gallo"): cero o muchos opcional `(O<)`.
     * Una línea perpendicular y un tridente: uno o muchos obligatorio `(|<)`.
-  * Es el estándar industrial de facto en herramientas CASE y motores SQL modernos debido a su compactación visual y traducción directa al esquema físico.
+  * Es el estándar industrial de facto en herramientas CASE y motores SQL modernos debido a su compactación visual y traducción directa al esquema físico relacional.
+  * *Representación esquemática Crow's Foot*:
+    ```text
+    +------------------------+                    +------------------------+
+    |       IMPORTADOR       |                    |  DECLARACION_ADUANERA  |
+    +------------------------+                    +------------------------+
+    | PK  id_importador      | ||--------------O< | PK  id_declaracion     |
+    |     numero_identif     |                    | FK  id_importador      |
+    |     razon_social       |                    |     numero_declaracion |
+    +------------------------+                    +------------------------+
+      "Un importador tramita cero o muchas declaraciones (O<);
+       cada declaración pertenece obligatoriamente a exactamente un importador (||)"
+    ```
+
+**Comparativa Sintética entre Ambas Notaciones:**
+
+| Elemento de Modelado | Notación de Chen | Notación Pata de Gallo (Crow's Foot) |
+| :--- | :--- | :--- |
+| **Entidad** | Rectángulo con el nombre en mayúsculas. | Caja con encabezado para el nombre y cuerpo para columnas. |
+| **Atributos** | Elipses conectadas con líneas a la entidad. | Filas de texto listadas en el interior de la caja de la entidad. |
+| **Relación Semántica** | Rombo etiquetado con un verbo conectando entidades. | Línea directa que une las entidades con patas en los extremos. |
+| **Clave Primaria (PK)** | Nombre del atributo subrayado dentro de la elipse. | Indicador textual `PK` al lado del atributo o en sección superior. |
+| **Cardinalidad 1:N** | Rótulo numérico `(1,1)` en un extremo y `(0,N)` en el otro. | Símbolo `||` en el lado padre y tridente `O<` o `|<` en el hijo. |
+| **Uso Predilecto** | Modelado conceptual puro y docencia académica. | Diseño lógico, físico, herramientas CASE (DBeaver, pgAdmin, Erwin). |
 
 ---
 
@@ -276,13 +305,20 @@ Bajo este esquema de **defensa en profundidad**, incluso si el LLM sufriera una 
 * **Partida Arancelaria**: Código numérico específico que identifica la naturaleza exacta del producto (ej. `8471.30.00.00` para computadoras portátiles). Determina los requisitos no arancelarios (permisos sanitarios, fitosanitarios o de seguridad) y los aranceles exigibles.
 * **Arancel y Valor en Aduanas (CIF)**: Tributo o impuesto que grava la importación de mercancías. Se calcula usualmente *ad-valorem* sobre el valor en aduana de la carga, conformado según el estándar internacional por el valor **CIF**: Costo del bien (*Cost*), Seguro marítimo o aéreo (*Insurance*) y Flete internacional (*Freight*).
 
-### 6.3. Regímenes Aduaneros: Definitivo, Depósito Fiscal, Tránsito y Admisión Temporal
-El régimen aduanero es el tratamiento legal aplicable a las mercancías según el destino declarado:
+### 6.3. Regímenes Aduaneros: Importación, Exportación, Tránsito y Depósito Aduanero
+El régimen aduanero es el tratamiento legal y tributario aplicable a las mercancías bajo control aduanero según el destino solicitado por el consignatario:
 
-1. **Importación Definitiva**: Ingreso de mercancías procedentes del exterior para su consumo final e indefinido dentro del territorio nacional, previo pago íntegro de los tributos de importación y cumplimiento de obligaciones arancelarias.
-2. **Depósito Aduanero / Depósito Fiscal**: Régimen suspensivo que permite almacenar mercancías extranjeras en una bodega autorizada por un plazo legal determinado, **sin pagar aún los impuestos de importación**. Durante este período, el importador puede reembalar, acondicionar o esperar liquidez financiera antes de nacionalizar o reexportar la carga.
-3. **Tránsito Aduanero**: Traslado bajo control aduanero de mercancías extranjeras desde una aduana de entrada hasta otra aduana nacional o internacional (ej. carga desembarcada en el Puerto de Moín con destino a una terminal en la frontera norte).
-4. **Admisión Temporal**: Ingreso de mercancías por un tiempo determinado con un fin específico (ej. equipos para exhibición en ferias comerciales, maquinaria para proyectos de infraestructura), con suspensión de tributos y la obligación de ser reexportadas sin sufrir modificación estructural.
+1. **Régimen de Importación**:
+   * *Importación Definitiva*: Ingreso de mercancías de procedencia extranjera para su consumo final e indefinido dentro del territorio nacional, previo pago íntegro de los derechos arancelarios e impuestos correspondientes (DAI, IVA, tasas aduaneras sobre el valor CIF) y cumplimiento de regulaciones no arancelarias (permisos fitosanitarios, certificados de homologación técnica).
+   * *Importación / Admisión Temporal con Reexportación en el Mismo Estado*: Ingreso con suspensión de tributos de mercancías destinadas a un propósito concreto (ej. equipos de filmación, maquinaria pesada para concesiones viales, muestras para ferias internacionales) con la obligación legal de ser reexportadas en un plazo perentorio sin haber sufrido alteración estructural.
+2. **Régimen de Exportación**:
+   * *Exportación Definitiva*: Salida del territorio aduanero de mercancías nacionales o nacionalizadas para su consumo, distribución o uso final en el exterior. Con carácter general, este régimen se encuentra exento de aranceles de salida para incentivar la balanza comercial y la competitividad internacional, aunque está sujeto a estrictos controles de seguridad portuaria, trazabilidad de origen y fiscalización antidrogas.
+   * *Exportación Temporal (Perfeccionamiento Pasivo)*: Salida temporal de mercancías para ser objeto de transformación, elaboración o reparación técnica en el extranjero, liquidando tributos únicamente sobre el valor agregado incorporado y los fletes incurridos al momento de su retorno al país.
+3. **Régimen de Depósito Aduanero / Depósito Fiscal**:
+   * Régimen de naturaleza suspensiva que faculta almacenar mercancías extranjeras en una bodega o almacén fiscal debidamente autorizado y concesionado por la autoridad aduanera por un plazo reglamentario (típicamente hasta 1 año), **sin que se haga exigible el desembolso de los tributos de importación**.
+   * Durante la custodia en depósito, el importador puede realizar labores de conservación, embalaje, etiquetado o extracción de muestras, o bien gestionar *despachos parciales*, nacionalizando gradualmente los bultos conforme a su demanda comercial o liquidez financiera.
+4. **Régimen de Tránsito Aduanero**:
+   * Mecanismo bajo el cual las mercancías sujetas a control aduanero son transportadas desde una aduana de partida (puerto o aduana fronteriza de ingreso) hasta una aduana de destino dentro del mismo territorio nacional (tránsito interno hacia una aduana interior) o hacia otro país (tránsito aduanero internacional), con suspensión total de tributos y garantizado mediante precintos fiscales electrónicos, rutas fijadas y plazos improrrogables.
 
 ---
 
@@ -292,6 +328,9 @@ Siguiendo las normas éticas de honestidad académica y las directrices universi
 
 ### Declaración de Herramientas Empleadas
 En el desarrollo de este laboratorio se utilizó el entorno **Antigravity** (desarrollado por el equipo de Google DeepMind) como asistente técnico y de pair programming para el diseño del modelo, estructuración de scripts SQL y configuración del flujo de n8n.
+* **Entorno de ejecución de pruebas:** [PERSONALIZAR: Indicar si se ejecutó en PostgreSQL local, contenedor Docker, o servicio cloud ej. PostgreSQL 16 local / Supabase]
+* **Orquestador de flujos:** n8n [PERSONALIZAR: ej. n8n Desktop local / n8n en Docker / n8n Cloud]
+* **Modelo LLM conectado:** [PERSONALIZAR: ej. OpenAI gpt-4o-mini / Anthropic claude-3-5-sonnet / Ollama local con LLaMA 3]
 
 ### Ejemplos de Prompts Empleados en la Interacción con el Asistente
 Durante las sesiones de trabajo técnico se utilizaron consignas estructuradas como las siguientes:
@@ -307,12 +346,14 @@ Durante las sesiones de trabajo técnico se utilizaron consignas estructuradas c
 * **Validación de Código y Estructura:** Se inspeccionó manualmente cada script SQL generado ([01_creacion_tablas.sql](file:///c:/Users/NVGWf/OneDrive/Documents/Programacion/BackEnd/semana2/10-23/lab3/sql/01_creacion_tablas.sql) y [02_insercion_datos.sql](file:///c:/Users/NVGWf/OneDrive/Documents/Programacion/BackEnd/semana2/10-23/lab3/sql/02_insercion_datos.sql)) para corroborar la correcta sintaxis, la jerarquía de tablas padre a hijas y la compatibilidad con PostgreSQL.
 * **Control de Versiones:** Se utilizó Git de forma rigurosa, confirmando cada fase en la rama `main` y sincronizándolo con el repositorio remoto de GitHub en cada cambio.
 * **Verificación de Seguridad:** Se auditó que ningún archivo del repositorio contuviera contraseñas reales, tokens de API o claves privadas, implementando un archivo `.gitignore` estricto.
+* **Pruebas de Consulta y Restricción:** [PERSONALIZAR: Detallar si realizaste pruebas manuales ejecutando consultas de verificación en psql, DBeaver o el Chat de n8n; por ejemplo: "Se ejecutó el script 04_consultas_verificacion.sql en DBeaver obteniendo resultados conformes"]
 
 ### Aprendizaje Obtenido por el Estudiante
 El uso de Antigravity como herramienta de apoyo me permitió:
 1. Comprender con mayor profundidad la relevancia de ordenar el diseño de bases de datos antes de escribir código (iniciando por el DER y el análisis de cardinalidad).
 2. Aprender a trasladar reglas de negocio reales (como los canales de aforo aduanero y la concordancia cronológica entre fechas de presentación y levante) en restricciones declarativas `CHECK` dentro de PostgreSQL.
 3. Asimilar la importancia de la seguridad por capas (Defensa en Profundidad), comprendiendo que la protección contra inyecciones no debe delegarse únicamente al prompt del modelo de IA, sino que debe asegurarse formalmente en los permisos del motor de base de datos.
+4. [PERSONALIZAR: Agregar un aprendizaje personal o reflexión propia sobre la experiencia con n8n y bases de datos relacionales]
 
 ---
 
