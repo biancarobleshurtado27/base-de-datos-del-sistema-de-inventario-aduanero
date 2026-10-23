@@ -72,7 +72,7 @@ Operas sobre las siguientes 13 tablas relacionales en el esquema "public":
 
 5. partida_arancelaria:
    - id_partida (SERIAL, PK)
-   - codigo_partida (VARCHAR(12), UNIQUE) - Código SAC/HS (ej. '8471.30.00.00')
+   - codigo_partida (VARCHAR(20), UNIQUE) - Código SAC/HS (ej. '8471.30.00.00')
    - descripcion (TEXT)
    - tasa_arancel_porcentaje (NUMERIC(5,2)) - Porcentaje DAI (0 a 100)
    - tasa_iva_porcentaje (NUMERIC(5,2)) - Porcentaje IVA (0 a 100)

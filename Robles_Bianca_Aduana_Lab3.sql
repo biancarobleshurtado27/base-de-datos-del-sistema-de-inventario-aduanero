@@ -101,7 +101,7 @@ COMMENT ON TABLE funcionario IS 'Personal oficial de la aduana con relación jer
 -- 3.5. Partidas Arancelarias (Sistema Armonizado / SAC)
 CREATE TABLE partida_arancelaria (
     id_partida SERIAL PRIMARY KEY,
-    codigo_partida VARCHAR(12) NOT NULL UNIQUE,
+    codigo_partida VARCHAR(20) NOT NULL UNIQUE,
     descripcion TEXT NOT NULL,
     tasa_arancel_porcentaje NUMERIC(5,2) NOT NULL,
     tasa_iva_porcentaje NUMERIC(5,2) NOT NULL,
