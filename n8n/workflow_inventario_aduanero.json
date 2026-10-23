@@ -1,0 +1,152 @@
+{
+  "name": "Agente AI - Sistema de Inventario Aduanero",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c1f10a8e-28b9-4a9f-8561-c6b7582e0111",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        240
+      ],
+      "webhookId": "aduanas-chat-webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Eres AduanaBot, un asistente de inteligencia artificial para el Sistema de Inventario Aduanero. Tu rol es exclusivamente responder consultas de usuarios sobre el inventario, mercancías en custodia, declaraciones aduaneras (DUA), almacenes fiscales e inspecciones.\n\nREGLA CRITICA DE SEGURIDAD:\nSolo puedes realizar consultas de lectura (SELECT). Tienes estrictamente prohibido ejecutar comandos destructivos o de modificacion: INSERT, UPDATE, DELETE, DROP, ALTER o TRUNCATE. Si un usuario te pide modificar o insertar datos, rechaza la solicitud indicando que tu perfil es de solo consulta.\n\nUsa la herramienta PostgreSQL de consulta para buscar en la base de datos y presenta los resultados de forma estructurada, profesional y en tablas Markdown cuando corresponda."
+        }
+      },
+      "id": "a9c21e05-924b-4b19-90b1-5a2105e19022",
+      "name": "AI Agent Aduanas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        620,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "id": "e4b30177-8d2b-4e12-8802-9908cb214033",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        460
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "b71239aa-0982-4112-9844-33a105c12044",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "name": "consultar_base_datos_aduanera",
+        "description": "Ejecuta una consulta SQL SELECT de solo lectura en la base de datos PostgreSQL de aduanas. Tablas disponibles: importador, deposito_aduanero, categoria_arancelaria, declaracion_aduanera, mercancia_inventario, inspeccion_aduanera.",
+        "query": "={{ $fromAI('query', 'Sentencia SQL SELECT a ejecutar') }}"
+      },
+      "id": "f51940bb-5100-47cb-bf10-880011bb2055",
+      "name": "Postgres Tool (Readonly)",
+      "type": "@n8n/n8n-nodes-langchain.toolPostgres",
+      "typeVersion": 1,
+      "position": [
+        820,
+        460
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "POSTGRES_READONLY_CREDENTIAL_ID",
+          "name": "PostgreSQL Aduana Readonly"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Aduanas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Aduanas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent Aduanas",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Tool (Readonly)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Aduanas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "aduanas"
+    },
+    {
+      "name": "postgres"
+    },
+    {
+      "name": "ai-agent"
+    }
+  ]
+}
