@@ -20,6 +20,8 @@ Laboratorio universitario de Bases de Datos con **PostgreSQL** y **n8n**.
   - Guía de configuración: [`n8n/guia_configuracion_n8n.md`](n8n/guia_configuracion_n8n.md)
 - [x] **Fase 5: Guía de Validación y Consultas de Prueba**
   - Consultas analíticas y pruebas de restricciones: [`sql/04_consultas_verificacion.sql`](sql/04_consultas_verificacion.sql)
+- [x] **Documento de Investigación Académico (3 a 6 páginas)**
+  - Informe completo: [`docs/documento_investigacion_inventario_aduanero.md`](docs/documento_investigacion_inventario_aduanero.md)
 
 ---
 
